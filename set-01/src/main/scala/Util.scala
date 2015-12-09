@@ -16,6 +16,19 @@ package tech.fay.matasano
 			array
 		}
 
+		def toHex(bytes: Array[Byte]): String =
+		{
+			val buffer = new StringBuilder(bytes.length * 2)
+			for (i <- 0 until bytes.length)
+			{
+				val b = bytes(i)
+				val bi: Int = if (b < 0) b + 256 else b
+				buffer append toHex((bi >>> 4).asInstanceOf[Byte])
+				buffer append toHex((bi & 0x0F).asInstanceOf[Byte])
+			}
+			buffer.toString
+		}
+
 		private def fromHex(c: Char): Int = 
 		{
 			val b = 
@@ -28,6 +41,15 @@ package tech.fay.matasano
 				else
 					throw new RuntimeException("Invalid hex character: '" + c + "'.")
 		b
+		}
+
+		private def toHex(b: Byte): Char =
+		{
+			require(b >= 0 && b <= 15, "Byte " + b + " was not between 0 and 15")
+			if (b < 10)
+				('0'.asInstanceOf[Int] + b).asInstanceOf[Char]
+			else
+				('a'.asInstanceOf[Int] + (b-10)).asInstanceOf[Char]
 		}
 	}
 }
