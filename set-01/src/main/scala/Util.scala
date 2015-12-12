@@ -29,6 +29,20 @@ package tech.fay.matasano
 			buffer.toString
 		}
 
+		def xor(a: String, b: String): Array[Byte] =
+		{
+			var aBytes = Util.fromHex(a)
+			var bBytes = Util.fromHex(b)
+			var result = new Array[Byte](aBytes.length)
+
+			for (i <- 0 until aBytes.length) 
+			{
+				var xor = (aBytes(i) ^ bBytes(i)).asInstanceOf[Byte]
+				result(i) = xor
+			}
+			result
+		}
+
 		private def fromHex(c: Char): Int = 
 		{
 			val b = 
