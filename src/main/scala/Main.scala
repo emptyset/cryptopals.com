@@ -1,8 +1,5 @@
 package tech.fay.matasano
 {
-	import scala.collection.immutable.HashMap
-	// cribbed from https://gist.github.com/lisinge/0c32417c550c9f3b6f63
-
 	object Main extends App 
 	{
 		// challenge 4
