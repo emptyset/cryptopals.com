@@ -70,5 +70,16 @@ package tech.fay.matasano
 			scala.util.Sorting.stableSort(scoreMap, (e1: Tuple2[Int, String], e2: Tuple2[Int, String]) => e1._1 > e2._1)
 			scoreMap
 		}
+
+		def decryptWithRepeatingKeyXor(key: Array[Byte], ciphertext: Array[Byte]): Array[Byte] =
+		{
+			var size = ciphertext.length
+			var plaintext = new Array[Byte](size)
+			for (i <- 0 to size - 1)
+			{
+				plaintext(i) = (ciphertext(i) ^ key(i % key.length)).asInstanceOf[Byte]
+			}
+			plaintext
+		}
 	}
 }
