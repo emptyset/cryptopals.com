@@ -30,7 +30,7 @@ package tech.fay.matasano
 			var score = 0
 			var map = HashMap[Char, Int](
 				' ' -> 24, // according to http://www.data-compression.com/english.html about twice as frequent as 'e'
-				'e' -> 12,
+				'e' -> 12, // just using relative frequencies; works with any monotonic increasing value assignment
 				't' -> 9,
 				'a' -> 8,
 				'o' -> 8,
@@ -51,7 +51,7 @@ package tech.fay.matasano
 
 		def evaluate(key: Array[Byte], ciphertext: Array[Byte]): Tuple2[Int, String] =
 		{
-			var result = Util.xor(ciphertext, key)
+			var result = Operation.xor(ciphertext, key)
 			var phrase = toString(result)
 			var score = Decrypt.scorePhrase(phrase)
 			(score, phrase)
