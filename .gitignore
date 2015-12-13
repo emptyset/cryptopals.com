@@ -1,2 +1,5 @@
+# scala artifacts
 target/
+
+# environment artifacts
 *.swp
