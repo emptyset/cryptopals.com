@@ -28,7 +28,7 @@ package tech.fay.matasano
 		for (line <- scala.io.Source.fromInputStream(stream).getLines())
 		{
 			plaintext = ('\n' + line).getBytes()
-			ciphertext = Encrypt.encryptWithRepeatingKeyXor(key, plaintext)
+			var ciphertext = Encrypt.encryptWithRepeatingKeyXor(key, plaintext)
 			var hex = Convert.toHex(ciphertext)
 			println(hex)
 
@@ -43,7 +43,7 @@ package tech.fay.matasano
 
 		// slight variant (actually correct)
 		var line1 = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20"
-		ciphertext = Convert.fromHex(line1)
+		var ciphertext = Convert.fromHex(line1)
 		plaintext = Decrypt.decryptWithRepeatingKeyXor(key, ciphertext)
 		var hex = Convert.toString(plaintext)
 		println(line1)
