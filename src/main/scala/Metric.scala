@@ -1,6 +1,7 @@
 package tech.fay.matasano
 {
 	import scala.collection.immutable.HashMap
+	import scala.util.Sorting
 
 	object Metric
 	{
@@ -27,5 +28,28 @@ package tech.fay.matasano
 			phrase.map(c => score += map getOrElse(c.toLower, 0))
 			score
 		}
+
+		def evaluate(key: Array[Byte], ciphertext: Array[Byte], method: (Array[Byte], Array[Byte]) => Array[Byte]): Tuple2[Int, String] =
+		{
+			var plaintext = method(key, ciphertext)
+			var phrase = Convert.toString(plaintext)
+			var score = Metric.scorePhrase(phrase)
+			(score, phrase)
+		}
+
+		def evaluateAgainstSingleCharacterKeys(ciphertext: Array[Byte]): Array[(Int, String)] =
+		{
+			var letters = ('a' to 'z').toSet ++ ('A' to 'Z').toSet ++ ('0' to '9').toSet
+			var scoreMap: Array[(Int, String)] = Array()
+			for (c <- letters.toIterator)
+			{
+				var key = Key.generateFromSingleCharacter(c, ciphertext.length)
+				scoreMap = scoreMap :+ evaluate(key, ciphertext, Decrypt.decryptWithXor)
+			}
+
+			Sorting.stableSort(scoreMap, (e1: Tuple2[Int, String], e2: Tuple2[Int, String]) => e1._1 > e2._1)
+			scoreMap
+		}
+
 	}
 }
