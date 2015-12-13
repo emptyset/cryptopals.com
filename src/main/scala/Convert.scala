@@ -3,6 +3,22 @@ package tech.fay.matasano
 	// cribbed from http://www.scala-sbt.org/0.13/sxr/sbt/Hash.scala.html
 	object Convert 
 	{
+		def fromString(s: String): Array[Byte] =
+		{
+			s.getBytes()
+		}
+
+		def toString(bytes: Array[Byte]): String =
+		{
+			var phrase = ""
+			for (i <- 0 to bytes.length - 1)
+			{
+				var character = bytes(i).asInstanceOf[Char]
+				phrase += character
+			}
+			phrase
+		}
+
 		def fromHex(hex: String): Array[Byte] =
 		{
 			require ((hex.length & 1) == 0, "Hex string must have length 2n.")

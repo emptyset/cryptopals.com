@@ -4,16 +4,6 @@ package tech.fay.matasano
 
 	object Decrypt
 	{
-		def generateSingleCharacterKey(c: Char, length: Int): Array[Byte] =
-		{
-			var array = new Array[Byte](length)
-			for (i <- 0 to array.length - 1)
-			{
-				array(i) = c.asInstanceOf[Byte]
-			}
-			array
-		}
-
 		def toString(bytes: Array[Byte]): String =
 		{
 			var phrase = ""
@@ -63,7 +53,7 @@ package tech.fay.matasano
 			var scoreMap: Array[(Int, String)] = Array()
 			for (c <- letters.toIterator)
 			{
-				var key = generateSingleCharacterKey(c, ciphertext.length)
+				var key = Key.generateFromSingleCharacter(c, ciphertext.length)
 				scoreMap = scoreMap:+evaluate(key, ciphertext)
 			}
 
