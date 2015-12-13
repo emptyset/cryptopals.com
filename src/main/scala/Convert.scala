@@ -1,7 +1,7 @@
 package tech.fay.matasano
 {
 	// cribbed from http://www.scala-sbt.org/0.13/sxr/sbt/Hash.scala.html
-	object Util 
+	object Convert 
 	{
 		def fromHex(hex: String): Array[Byte] =
 		{

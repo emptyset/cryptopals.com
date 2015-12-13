@@ -7,11 +7,10 @@ class S01C02 extends UnitSpec {
 		var b = "686974207468652062756c6c277320657965"
 		var expected = "746865206b696420646f6e277420706c6179"
 
-		var aBytes = Util.fromHex(a)
-		var bBytes = Util.fromHex(b)
+		var aBytes = Convert.fromHex(a)
+		var bBytes = Convert.fromHex(b)
 		var result = Operation.xor(aBytes, bBytes)
-		// TODO: migrate this to a Convert class
-		var hex = Util.toHex(result)
+		var hex = Convert.toHex(result)
 		// TODO: actually compare byte arrays (write method)
 		assert(hex == expected)
 	}
