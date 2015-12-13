@@ -2,25 +2,11 @@ package tech.fay.matasano
 {
 	object Main extends App 
 	{
-		// challenge 4
-		// iterate through each line in the file, "4.txt"
-		// evaluate each line against all single character keys
-		// print out just the first element in each evaluation
-
-		// TODO: see if src/main/resources is accessible; should be
-		var stream: java.io.InputStream = getClass.getResourceAsStream("/4.txt")
-		for (line <- scala.io.Source.fromInputStream(stream).getLines())
-		{
-			var ciphertext = Convert.fromHex(line)
-			var scoreMap = Metric.evaluateAgainstSingleCharacterKeys(ciphertext)
-			//scoreMap.foreach(e => if (e._1 > 200) println(e._1 + "\t" + e._2))
-		}
-
 		// challenge 5
 		// pull text from the file "5.txt"
 		// encrypt each byte with key "ICE" using repeating-key XOR
 		var key = Key.generateFromString("ICE")
-		stream = getClass.getResourceAsStream("/5-plaintext.txt")
+		var stream = getClass.getResourceAsStream("/5-plaintext.txt")
 		var plaintext = Array[Byte]()
 		for (line <- scala.io.Source.fromInputStream(stream).getLines())
 		{
