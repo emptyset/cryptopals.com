@@ -14,5 +14,23 @@ package tech.fay.matasano
 			}
 			result
 		}
+
+		def hammingDistance(a: Array[Byte], b: Array[Byte]): Int =
+		{
+			var result = xor(a, b)
+			var distance = 0
+			for (i <- 0 until result.length)
+			{
+				var byte = result(i)
+				while (byte != 0)
+				{
+					if ((byte & 0x01) == 0x01) {
+						distance += 1
+					}
+					byte = (byte >> 1).asInstanceOf[Byte]
+				}
+			}
+			distance
+		}
 	}
 }
