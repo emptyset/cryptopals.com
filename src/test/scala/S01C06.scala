@@ -21,13 +21,7 @@ class S01C06 extends UnitSpec {
 
 	"The 4 smallest key sizes with the smallest normalized edit distance" should "equal 2, 3, 5, 7" in
 	{
-		var buffer = new ArrayBuffer[Byte]()
-		var stream: java.io.InputStream = getClass.getResourceAsStream("/6-ciphertext.txt")
-		for (line <- scala.io.Source.fromInputStream(stream).getLines())
-		{
-			buffer = buffer ++ ApacheBase64.decodeBase64(line.getBytes)
-		}
-		var ciphertext = buffer.toArray
+		var ciphertext = Io.readBase64Resource("/6-ciphertext.txt")
 
 		var scoreBuffer = new ArrayBuffer[Tuple2[Int, Float]]()
 		for (keySize <- 2 until 40)
@@ -45,5 +39,54 @@ class S01C06 extends UnitSpec {
 		assert(scores(3)._1 == 7)
 	}
 
+	"Each break of original ciphertext into blocks" should "result in an Array of blocks of size keySize" in
+	{
+		var ciphertext = Io.readBase64Resource("/6-ciphertext.txt")
+		println("ciphertext.length = " + ciphertext.length)
+		var keySizes = Array[Int](2, 3, 5, 7)
+		for (keySize <- keySizes.toIterator)
+		{
+			println("keySize = " + keySize)
+			val blocks = Operation.toBlocks(ciphertext, keySize)
+			println("blocks.length = " + blocks.length)
+			//assert(blocks.length == scala.math.ceil(ciphertext.length.toDouble / keySize).toInt)
+			assert(blocks(0).length == keySize)
+		}
+	}
 
+	"Solving transposed blocks" should "produce single-character XOR keys" in
+	{
+		var ciphertext = Io.readBase64Resource("/6-ciphertext.txt")
+		var keySizes = Array[Int](2) // , 3, 5, 7)
+		keySizes.foreach(keySize => 
+		{
+			//println("ciphertext.length = " + ciphertext.length)
+			val blocks = Operation.toBlocks(ciphertext, keySize)
+			//println("blocks.length = " + blocks.length)
+			val transposed = Operation.transposeBlocks(blocks)
+			//println("transposed.length = " + transposed.length)
+
+			val letters = ('a' to 'z').toSet ++ ('A' to 'Z').toSet ++ ('0' to '9').toSet
+			for (i <- 0 until keySize)
+			{
+				//println("transposed(i).length = " + transposed(i).length)
+				val singleKeyCiphertext = transposed(i)
+				for (c <- letters.toIterator)
+				{
+					val key = Key.generateFromSingleCharacter(c, singleKeyCiphertext.length)
+					var plaintext = Decrypt.decryptWithXor(key, singleKeyCiphertext)
+					var phrase = Convert.toString(plaintext)
+					var score = Metric.scorePhrase(phrase)
+					
+					//println("===\t" + keySize + "\t" + i + "\t" + c + "\t" + score +"\t===")
+					//println("phrase = " + phrase)
+				}
+
+				//val scoreMap = Metric.evaluateAgainstSingleCharacterKeys(singleKeyCiphertext)
+				//println(scoreMap(0))
+			}
+					
+			assert(false)
+		})
+	}
 }

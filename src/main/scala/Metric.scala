@@ -45,6 +45,9 @@ package tech.fay.matasano
 			{
 				var key = Key.generateFromSingleCharacter(c, ciphertext.length)
 				scoreMap = scoreMap :+ evaluate(key, ciphertext, Decrypt.decryptWithXor)
+				//val score = evaluate(key, ciphertext, Decrypt.decryptWithXor)._1
+				//if (score > 4000)
+				//	println(c + "\t" + score)
 			}
 
 			Sorting.stableSort(scoreMap, (e1: Tuple2[Int, String], e2: Tuple2[Int, String]) => e1._1 > e2._1)

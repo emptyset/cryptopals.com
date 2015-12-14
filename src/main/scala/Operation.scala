@@ -1,5 +1,7 @@
 package tech.fay.matasano
 {
+	import scala.collection.mutable.ArrayBuffer
+
 	// cribbed from http://www.scala-sbt.org/0.13/sxr/sbt/Hash.scala.html
 	object Operation 
 	{
@@ -31,6 +33,43 @@ package tech.fay.matasano
 				}
 			}
 			distance
+		}
+
+		def toBlocks(bytes: Array[Byte], size: Int): Array[Array[Byte]] =
+		{
+			// TODO: fix the block size issue (padding with zeroes correctly)
+			val buffer = new ArrayBuffer[Array[Byte]]()
+			for (i <- 0 until bytes.length - 1 by size)
+			{
+				val block = new Array[Byte](size)
+				for (j <- 0 until size - 1)
+				{
+					block(j) = bytes(i + j)
+				}
+				buffer.append(block)
+			}
+			buffer.toArray
+		}
+
+		def transposeBlocks(blocks: Array[Array[Byte]]): Array[Array[Byte]] =
+		{
+			val buffer = new ArrayBuffer[Array[Byte]]()
+			val blockSize = blocks(0).length
+			for (k <- 0 until blockSize)
+			{
+				buffer.append(new Array[Byte](blocks.length))
+			}
+			val transposed = buffer.toArray
+
+			for (i <- 0 until blocks.length - 1)
+			{
+				val block = blocks(i)
+				for (j <- 0 until blockSize)
+				{
+					transposed(j)(i) = blocks(i)(j)
+				}
+			}
+			transposed
 		}
 	}
 }
