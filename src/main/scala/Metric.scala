@@ -51,5 +51,27 @@ package tech.fay.matasano
 			scoreMap
 		}
 
+		def scoreKeySize(ciphertext: Array[Byte], size: Int): Float =
+		{
+			var first = new Array[Byte](size)
+			var second = new Array[Byte](size)
+			var third = new Array[Byte](size)
+			var fourth = new Array[Byte](size)
+
+			for (i <- 0 until (size - 1))
+			{
+				first(i) = ciphertext(i)
+				second(i) = ciphertext(i + size)
+				third(i) = ciphertext(i + (size * 2))
+				fourth(i) = ciphertext(i + (size * 3))
+			}
+
+			var sum = 0
+			sum += Operation.hammingDistance(first, second)
+			sum += Operation.hammingDistance(second, third)
+			sum += Operation.hammingDistance(third, fourth)
+			var distance = sum.toFloat / 3
+			distance / size
+		}
 	}
 }
