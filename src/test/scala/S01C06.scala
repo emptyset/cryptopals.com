@@ -33,23 +33,22 @@ class S01C06 extends UnitSpec {
 		Sorting.stableSort(scores, (a: Tuple2[Int, Float], b: Tuple2[Int, Float]) => a._2 <= b._2)
 		//scores.foreach(score => println(score._1 + "\t" + score._2))
 
+		// TODO: how to get 29 as the keySize value with lowest normalized edit distance?
+		// TODO: try averaging among all blocks of keySize pairs in sequence?
 		assert(scores(0)._1 == 2)
 		assert(scores(1)._1 == 3)
-		assert(scores(2)._1 == 5)
-		assert(scores(3)._1 == 7)
+		assert(scores(2)._1 == 29)
+		assert(scores(3)._1 == 5)
 	}
 
 	"Each break of original ciphertext into blocks" should "result in an Array of blocks of size keySize" in
 	{
 		var ciphertext = Io.readBase64Resource("/6-ciphertext.txt")
-		println("ciphertext.length = " + ciphertext.length)
-		var keySizes = Array[Int](2, 3, 5, 7)
+		var keySizes = Array[Int](2, 3, 29, 5)
 		for (keySize <- keySizes.toIterator)
 		{
-			println("keySize = " + keySize)
 			val blocks = Operation.toBlocks(ciphertext, keySize)
-			println("blocks.length = " + blocks.length)
-			//assert(blocks.length == scala.math.ceil(ciphertext.length.toDouble / keySize).toInt)
+			assert(blocks.length == scala.math.ceil(ciphertext.length.toDouble / keySize).toInt)
 			assert(blocks(0).length == keySize)
 		}
 	}
@@ -57,19 +56,18 @@ class S01C06 extends UnitSpec {
 	"Solving transposed blocks" should "produce single-character XOR keys" in
 	{
 		var ciphertext = Io.readBase64Resource("/6-ciphertext.txt")
-		var keySizes = Array[Int](2) // , 3, 5, 7)
+		var keySizes = Array[Int](29)
 		keySizes.foreach(keySize => 
 		{
-			//println("ciphertext.length = " + ciphertext.length)
 			val blocks = Operation.toBlocks(ciphertext, keySize)
-			//println("blocks.length = " + blocks.length)
 			val transposed = Operation.transposeBlocks(blocks)
-			//println("transposed.length = " + transposed.length)
 
-			val letters = ('a' to 'z').toSet ++ ('A' to 'Z').toSet ++ ('0' to '9').toSet
+			val decodedKey = new StringBuilder() 
+			val letters = (' ' to '~').toSet 
 			for (i <- 0 until keySize)
 			{
-				//println("transposed(i).length = " + transposed(i).length)
+				var character = ' '
+				var currentScore = 0
 				val singleKeyCiphertext = transposed(i)
 				for (c <- letters.toIterator)
 				{
@@ -78,15 +76,18 @@ class S01C06 extends UnitSpec {
 					var phrase = Convert.toString(plaintext)
 					var score = Metric.scorePhrase(phrase)
 					
-					//println("===\t" + keySize + "\t" + i + "\t" + c + "\t" + score +"\t===")
-					//println("phrase = " + phrase)
+					if (score >= currentScore) 
+					{
+						character = c
+						currentScore = score
+					}
 				}
-
-				//val scoreMap = Metric.evaluateAgainstSingleCharacterKeys(singleKeyCiphertext)
-				//println(scoreMap(0))
+				decodedKey += character
 			}
-					
-			assert(false)
+
+			assert(decodedKey.toString == "Terminator X: Bring the noise")
+			// lyrics to "Play That Funky Music" - Vanilla Ice
+			//println(Convert.toString(Decrypt.decryptWithRepeatingKeyXor(decodedKey.toString.getBytes, ciphertext)))
 		})
 	}
 }

@@ -37,16 +37,22 @@ package tech.fay.matasano
 
 		def toBlocks(bytes: Array[Byte], size: Int): Array[Array[Byte]] =
 		{
-			// TODO: fix the block size issue (padding with zeroes correctly)
 			val buffer = new ArrayBuffer[Array[Byte]]()
-			for (i <- 0 until bytes.length - 1 by size)
+			for (i <- 0 until bytes.length)
 			{
-				val block = new Array[Byte](size)
-				for (j <- 0 until size - 1)
+				if (i % size == 0)
 				{
-					block(j) = bytes(i + j)
+					val block = new Array[Byte](size)
+					for (j <- 0 until size)
+					{
+						var index = i + j
+						if (index > bytes.length - 1)
+							block(j) = 0.asInstanceOf[Byte]
+						else
+							block(j) = bytes(index)
+					}
+					buffer.append(block)
 				}
-				buffer.append(block)
 			}
 			buffer.toArray
 		}
