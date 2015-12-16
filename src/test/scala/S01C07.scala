@@ -12,6 +12,7 @@ class S01C07 extends UnitSpec {
 		var key = tech.fay.matasano.Key.generateFromString("YELLOW SUBMARINE")
 
 		var plaintext = Decrypt.decryptWithAesEcbNoPadding(key, ciphertext)
-		println(Convert.toString(plaintext))
+		assert(true)
+		//println(Convert.toString(plaintext))
 	}
 }
